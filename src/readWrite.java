@@ -6,7 +6,7 @@ public class readWrite {
 
     public static readWrite getReadWriteClass()
     {
-        if (instance != null){
+        if (instance == null){
             instance = new readWrite();
         }
         return instance;

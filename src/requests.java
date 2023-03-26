@@ -14,7 +14,7 @@ public class requests {
 
     public static requests getRequestsClass()
     {
-        if (instance != null){
+        if (instance == null){
            instance = new requests();
         }
         return instance;
@@ -49,7 +49,7 @@ public class requests {
         }
         reader.close();
 
-        System.out.println(ueberstezungJson);
+        //System.out.println(ueberstezungJson);
         whichData(ueberstezungJson, requestContent);
     }
 
@@ -61,7 +61,7 @@ public class requests {
                 datenAnalysieren(Json, requestContent, "StateOfCharge_Relative", "Temperature_Cell", "Timestamp");
                 break;
             case "PowerFlow":
-                datenAnalysieren(Json, requestContent, "P_Akku", "P_Grid", "P_Load", "P_PV", "rel_Autonomy", "rel_SelfConsumption", "E_Total", "Timestamp" );
+                datenAnalysieren(Json, requestContent, "P_Akku", "P_Grid", "P_Load", "P_PV", "rel_Autonomy", "rel_SelfConsumption", "Timestamp" );
                 break;
             case "three":
                 //
@@ -80,6 +80,7 @@ public class requests {
 
         for (String arg : args) {
             keywords.add(arg);
+            //System.out.println(arg);
         }
 
         data = new String[2][keywords.size()];  //new String[keywords.size()][keywords.size()];
@@ -99,7 +100,15 @@ public class requests {
 
                     for (int z = 0; z < splitv2.length; z++) {
                         if (splitv2[z].contains(":")) {
-                            information.add(splitv2[z + 1]);
+                            if (splitv2[z+1].contains("\n"))
+                            {
+                                String[] splitv3 = splitv2[z+1].split("\n");
+                                information.add(splitv3[0]);
+
+                            }
+                            else {
+                                information.add(splitv2[z + 1]);
+                            }
                         }
                     }
                 }
@@ -110,6 +119,11 @@ public class requests {
         for (int i = 0; i<keywords.size(); i++) {
             data [0][i] = keywords.get(i);
             data [1][i] = information.get(i);
+            //System.out.println("-------");
+            //System.out.println(i);
+            //System.out.println(keywords.get(i));
+            //System.out.println(information.get(i));
+
         }
 
         Main.ST.choseStorage(requestContent, data);

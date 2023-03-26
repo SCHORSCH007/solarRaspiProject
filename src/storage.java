@@ -5,7 +5,7 @@ import java.util.List;
 public class storage {
 
     public List<String>[] getStorageAkkList = new List[3];  // [0]StateOfCharge_Relative, [1]Temperature_Cell ,[2]Timestamp
-    public List<String>[] getPowerFlowList = new List[8];  // [0]P_Akku, [1]P_Grid , [2]P_Load, [3] P_PV, [4]rel_Autonomy, [5]rel_SelfConsumption, [6]E_Total, [7]Timestamp
+    public List<String>[] getPowerFlowList = new List[7];  // [0]P_Akku, [1]P_Grid , [2]P_Load, [3] P_PV, [4]rel_Autonomy, [5]rel_SelfConsumption, [6]Timestamp
 
 
                 //ab hier alles für singleton
@@ -13,7 +13,7 @@ public class storage {
 
     public static storage getStorageClass()
     {
-        if (instance != null){
+        if (instance == null){
             instance = new storage();
         }
         return instance;
@@ -59,11 +59,23 @@ public class storage {
         }
     }
 
-    public void printStorage(int f)
+    public void printStorage()
     {
-        if (f ==1){
-        System.out.println(getStorageAkkList);}
-        else {System.out.println(getPowerFlowList);}
+        for(int i = 0; i < getStorageAkkList.length; i++)
+        {
+            for(int z = 0; z < getStorageAkkList[i].size(); z++) {
+
+                System.out.println(getStorageAkkList[i].get(z));
+            }
+        }
+        System.out.println("-------------------------------------------------");
+        for(int i = 0; i < getPowerFlowList.length; i++)
+        {
+            for(int z = 0; z < getPowerFlowList[i].size(); z++) {
+
+                System.out.println(getPowerFlowList[i].get(z));
+            }
+        }
 
     }
 
