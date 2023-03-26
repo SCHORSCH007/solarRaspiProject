@@ -21,6 +21,10 @@ public class Main {
         RW = readWrite.getReadWriteClass();
 
         RQ.getAbfrage("http://192.168.179.7/solar_api/v1/GetStorageRealtimeData.cgi", "getStorage");
+        ST.printStorage(1);
+        RQ.getAbfrage("http://192.168.179.7/solar_api/v1/GetPowerFlowRealtimeData.fcgi","PowerFlow");
+
+        ST.printStorage(2);
 
 
     }

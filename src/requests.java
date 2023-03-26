@@ -58,10 +58,10 @@ public class requests {
     public static void whichData(String Json, String requestContent) {
         switch (requestContent) {
             case "getStorage":
-                datenAnalysieren(Json, requestContent, "StateOfCharge_Relative", "Capacity_Maximum");
+                datenAnalysieren(Json, requestContent, "StateOfCharge_Relative", "Temperature_Cell", "Timestamp");
                 break;
-            case "two":
-                //
+            case "PowerFlow":
+                datenAnalysieren(Json, requestContent, "P_Akku", "P_Grid", "P_Load", "P_PV", "rel_Autonomy", "rel_SelfConsumption", "E_Total", "Timestamp" );
                 break;
             case "three":
                 //
@@ -82,7 +82,7 @@ public class requests {
             keywords.add(arg);
         }
 
-        data = new String[keywords.size()][keywords.size()];
+        data = new String[2][keywords.size()];  //new String[keywords.size()][keywords.size()];
 
         /*
         Dieses wilde Konstrukt sollte alle Informationen zu allen Keywords liefern,

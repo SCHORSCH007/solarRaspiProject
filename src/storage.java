@@ -4,8 +4,8 @@ import java.util.List;
 
 public class storage {
 
-    public List<String>[] getStorageAkkList = new List[2];
-
+    public List<String>[] getStorageAkkList = new List[3];  // [0]StateOfCharge_Relative, [1]Temperature_Cell ,[2]Timestamp
+    public List<String>[] getPowerFlowList = new List[8];  // [0]P_Akku, [1]P_Grid , [2]P_Load, [3] P_PV, [4]rel_Autonomy, [5]rel_SelfConsumption, [6]E_Total, [7]Timestamp
 
 
                 //ab hier alles für singleton
@@ -25,6 +25,10 @@ public class storage {
         {
             getStorageAkkList[i] = new ArrayList<>();
         }
+        for (int i = 0; i< getPowerFlowList.length; i++)
+        {
+            getPowerFlowList[i] = new ArrayList<>();
+        }
 
     }
                 //bis hier alles für singleton
@@ -38,8 +42,8 @@ public class storage {
             case "getStorage":
                     store(data, getStorageAkkList);
                 break;
-            case "two":
-                //
+            case "PowerFlow":
+                    store(data, getPowerFlowList);
                 break;
             case "three":
                 //
@@ -53,6 +57,14 @@ public class storage {
         for (int i = 0; i < list.length; i++){
             list[i].add(data[1][i]);
         }
+    }
+
+    public void printStorage(int f)
+    {
+        if (f ==1){
+        System.out.println(getStorageAkkList);}
+        else {System.out.println(getPowerFlowList);}
+
     }
 
 }
