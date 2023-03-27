@@ -64,7 +64,6 @@ public class storage {
         for(int i = 0; i < getStorageAkkList.length; i++)
         {
             for(int z = 0; z < getStorageAkkList[i].size(); z++) {
-
                 System.out.println(getStorageAkkList[i].get(z));
             }
         }
@@ -72,7 +71,6 @@ public class storage {
         for(int i = 0; i < getPowerFlowList.length; i++)
         {
             for(int z = 0; z < getPowerFlowList[i].size(); z++) {
-
                 System.out.println(getPowerFlowList[i].get(z));
             }
         }
