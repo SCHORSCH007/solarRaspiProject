@@ -54,7 +54,7 @@ public class readWrite {
         boolean datenDavorEinfügen = false;
         List<String>[] listBeforeData = null;
 
-        if (isFileExist(path)) {
+        if (false) { //isFileExist(path)
             listBeforeData = list.clone();
             for(int i = 0; i < list.length; i++){
                 list[i].clear();
@@ -90,7 +90,7 @@ public class readWrite {
             default:
         }
 
-        if (datenDavorEinfügen){
+        if (datenDavorEinfügen && listBeforeData != null){
             while(listBeforeData[0].size() > 0) {
 
                 // add data to csv
@@ -103,9 +103,13 @@ public class readWrite {
             }
         }
 
+        System.out.println(list[0].get(0));
+        System.out.println(date);
+        System.out.println(list[list.length-1].get(0).substring(1,10));
+
         while(list[0].size() > 0) {
 
-            if(date != list[list.length-1].get(0).substring(1,10) ) { //falls Datensatz von neuem Tag
+            if(!date.equals(list[list.length-1].get(0).substring(1,10))) { //falls Datensatz von neuem Tag
                 writeCVSFile(list, listName);
                 return;
             }
@@ -124,6 +128,9 @@ public class readWrite {
     }
 
     public List<String>[] readCVSFile( List<String>[] listBeforeData, String path, String listname) throws IOException {
+
+        if (true){
+        return null;}
 
         Path filepath = Paths.get(path);
 
