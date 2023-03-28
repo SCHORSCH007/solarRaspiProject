@@ -1,8 +1,6 @@
 import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.lang.Thread.sleep;
 
@@ -36,7 +34,7 @@ public class Main {
 
         RW.storeStart(ST.getPowerFlowList, "getPowerFlowList" );
 
-        RW.storeStart(ST.getStorageAkkList, "getPowerFlowList" );
+        RW.storeStart(ST.getStorageAkkList, "getStorageAkkList" );
 
     }
 
