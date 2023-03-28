@@ -55,7 +55,7 @@ public class storage {
 
     public void store (String [][] data, List<String>[] list){
         for (int i = 0; i < list.length; i++){
-            list[i].add(data[1][i]);
+            list[i].add(data[1][i].replaceAll("\"", ""));
         }
     }
 

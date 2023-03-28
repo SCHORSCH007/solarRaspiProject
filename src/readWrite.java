@@ -2,15 +2,15 @@ import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+
 public class readWrite {
 
 
@@ -33,7 +33,7 @@ public class readWrite {
 
 
 
-    public void storeStart(List<String>[] list, String listName) throws IOException {  //useless method maybe for later
+    public void storeStart(List<String>[] list, String listName) throws IOException, CsvValidationException {  //useless method maybe for later
         switch (listName) {
             case "getStorageAkkList":
                     writeCVSFile(list, listName);
@@ -46,24 +46,16 @@ public class readWrite {
 
     }
 
-    public void writeCVSFile(List<String>[] list, String listName) throws IOException {
+    public void writeCVSFile(List<String>[] list, String listName) throws IOException, CsvValidationException {
 
         String date = list[list.length-1].get(0);
-        date = date.substring(1,10);
+        date = date.substring(0,10);
         String path = getFilePath(date, listName);
-        boolean datenDavorEinfügen = false;
-        List<String>[] listBeforeData = null;
 
-        if (false) { //isFileExist(path)
-            listBeforeData = list.clone();
-            for(int i = 0; i < list.length; i++){
-                list[i].clear();
-            }
-            datenDavorEinfügen = true;
-            listBeforeData = readCVSFile(listBeforeData, path, listName);
-
-            File fileBefore = new File(path);
-            fileBefore.delete();
+        File f = isFileExist(path);
+        if (f != null) {
+            System.out.println("file already exists");
+            list = readCVSFile(list, path, listName, f);
 
         }
 
@@ -77,39 +69,14 @@ public class readWrite {
         // create CSVWriter object filewriter object as parameter
         CSVWriter writer = new CSVWriter(outputfile);
 
-        // adding header to csv
-        switch (listName) {
-            case "getStorageAkkList":
-                String[] headergs = {"StateOfCharge_Relative", "Temperature_Cell", "Timestamp"};
-                writer.writeNext(headergs);
-                break;
-            case "getPowerFlowList":
-                String[] headergf = {"P_Akku", "P_Grid", "P_Load", "P_PV", "rel_Autonomy", "rel_SelfConsumption", "Timestamp"};
-                writer.writeNext(headergf);
-                break;
-            default:
-        }
+        //writes header
+        writer.writeNext(getHeaderFN(listName));
 
-        if (datenDavorEinfügen && listBeforeData != null){
-            while(listBeforeData[0].size() > 0) {
-
-                // add data to csv
-                String[] data = new String[listBeforeData.length];
-                for (int i = 0; i < listBeforeData.length; i++) {
-                    data [i] = listBeforeData[i].get(0);
-                    listBeforeData[i].remove(0);
-                }
-                writer.writeNext(data);
-            }
-        }
-
-        System.out.println(list[0].get(0));
-        System.out.println(date);
-        System.out.println(list[list.length-1].get(0).substring(1,10));
 
         while(list[0].size() > 0) {
 
-            if(!date.equals(list[list.length-1].get(0).substring(1,10))) { //falls Datensatz von neuem Tag
+            if(!date.equals(list[list.length-1].get(0).substring(0,10))) { //falls Datensatz von neuem Tag
+                writer.close();
                 writeCVSFile(list, listName);
                 return;
             }
@@ -120,6 +87,7 @@ public class readWrite {
                 data [i] = list[i].get(0);
                 list[i].remove(0);
             }
+            System.out.println(data[data.length-1]);
             writer.writeNext(data);
         }
 
@@ -127,49 +95,68 @@ public class readWrite {
         writer.close();
     }
 
-    public List<String>[] readCVSFile( List<String>[] listBeforeData, String path, String listname) throws IOException {
 
-        if (true){
-        return null;}
 
-        Path filepath = Paths.get(path);
+    public List<String>[] readCVSFile( List<String>[] list, String path, String listname, File file) throws IOException, CsvValidationException {
 
-        List<String[]> list = new ArrayList<>();
-        try (Reader reader = Files.newBufferedReader(filepath)) {
-            try (CSVReader csvReader = new CSVReader(reader)) {
-                String[] line;
-                while ((line = csvReader.readNext()) != null) {
-                    list.add(line);
-                }
-            } catch (CsvValidationException e) {
-                throw new RuntimeException(e);
+        //File file = new File(path);
+        FileReader inputfile = new FileReader(path);
+        BufferedReader br = new BufferedReader(inputfile);
+
+
+        br.readLine(); // header
+
+        String row = null;
+        String [] line = new String [list.length];
+
+
+        while ((row = br.readLine()) != null) {
+            int counter = 0;
+
+            line = row.split(",");
+
+            for (int i = 0; i< line.length; i++){
+                list[i].add(counter, line[i].replaceAll("\"", ""));
+                System.out.println(line[i]);
             }
+            counter = counter +1;
         }
 
-        for(int i = 0; i< list.size(); i++){
-            for (int f = 0; f < list.get(i).length; f++){
-                listBeforeData[i].add(list.get(i)[f]);
-            }
-        }
+        file.delete();
+        br.close();
 
-
-        return listBeforeData;
+        return list;
     }
 
     public String getFilePath(String date, String listName){
-        String fp = "D:\\solarAPIOutput\\" + listName + date;
+        String fp = "D:\\solarAPIOutput\\" + listName + date + ".csv";
         return fp;
     }
 
-    public boolean isFileExist(String path) {
+    public File isFileExist(String path) {
         File f = new File(path);
-        if (f.exists()) {
-            return true;
-        }
-        else {
-            return false;
-        }
+       if (f.isFile())
+       {
+           return f;
+       }
+        else{
 
+           return null;
+       }
+    }
+
+    private String[] getHeaderFN(String listName) {
+        // adding header to csv
+        switch (listName) {
+            case "getStorageAkkList":
+                String[] headergs = {"StateOfCharge_Relative", "Temperature_Cell", "Timestamp"};
+                return headergs;
+            case "getPowerFlowList":
+                String[] headergf = {"P_Akku", "P_Grid", "P_Load", "P_PV", "rel_Autonomy", "rel_SelfConsumption", "Timestamp"};
+                return headergf;
+            default:
+                return null;
+        }
     }
 
 }
