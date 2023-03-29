@@ -8,5 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="opencsv-5.7.1" level="project" />
+    <orderEntry type="library" name="groupdocs-conversion-23.2" level="project" />
   </component>
 </module>

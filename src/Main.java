@@ -11,33 +11,48 @@ public class Main {
     public static storage ST;
     public static readWrite RW;
 
+    public static String path;
+
     public static void main(String[] args) throws IOException, CsvValidationException {
 
-
-
-
+        path = "D:\\solarAPIOutput\\";
+            //path = "\\home\\schorsch007\\DATENSOLAR\\"
         RQ = requests.getRequestsClass();
         ST = storage.getStorageClass();
         RW = readWrite.getReadWriteClass();
 
-        RQ.getAbfrage("http://192.168.179.7/solar_api/v1/GetStorageRealtimeData.cgi", "getStorage");
-        RQ.getAbfrage("http://192.168.179.7/solar_api/v1/GetPowerFlowRealtimeData.fcgi","PowerFlow");
-        try {
-            sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        RQ.getAbfrage("http://192.168.179.7/solar_api/v1/GetStorageRealtimeData.cgi", "getStorage");
-        RQ.getAbfrage("http://192.168.179.7/solar_api/v1/GetPowerFlowRealtimeData.fcgi","PowerFlow");
+        normalExe();
 
-        ST.printStorage();
-
-        RW.storeStart(ST.getPowerFlowList, "getPowerFlowList" );
-
-        RW.storeStart(ST.getStorageAkkList, "getStorageAkkList" );
 
     }
 
+    public static void normalExe() throws IOException, CsvValidationException {
+
+        long startTime = System.currentTimeMillis();
+        int counterStore = 0;
+
+        while (true){
+
+
+            if ((System.currentTimeMillis()-startTime) > 10000){
+                RQ.getAbfrage("http://192.168.179.7/solar_api/v1/GetStorageRealtimeData.cgi", "getStorage");
+                RQ.getAbfrage("http://192.168.179.7/solar_api/v1/GetPowerFlowRealtimeData.fcgi","PowerFlow");
+                startTime = System.currentTimeMillis();
+                counterStore ++;
+            }
+
+
+            if (counterStore >  30) {
+                RW.storeStart(ST.getPowerFlowList, "getPowerFlowList");
+                RW.storeStart(ST.getStorageAkkList, "getStorageAkkList");
+                counterStore = 0;
+            }
+
+
+
+        }
+
+    }
 }
 
 /*
