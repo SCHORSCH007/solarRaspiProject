@@ -1,20 +1,20 @@
-import com.opencsv.CSVReader;
+/*
+import com.groupdocs.conversion.Converter;
+import com.groupdocs.conversion.filetypes.SpreadsheetFileType;
+import com.groupdocs.conversion.options.convert.SpreadsheetConvertOptions;
+import com.groupdocs.conversion.options.load.CsvLoadOptions;
+*/
+
 import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.*;
-import java.nio.Buffer;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 public class readWrite {
 
 
-                        //ab hier alles für singleton
+    //ab hier alles für singleton
     public static readWrite instance = null;
 
     public static readWrite getReadWriteClass()
@@ -28,6 +28,8 @@ public class readWrite {
     public readWrite ()
     {}      //bis hier alles für singleton
 
+
+
     // getStorageAkkList    [0]StateOfCharge_Relative, [1]Temperature_Cell ,[2]Timestamp
     // getPowerFlowList     [0]P_Akku, [1]P_Grid , [2]P_Load, [3] P_PV, [4]rel_Autonomy, [5]rel_SelfConsumption, [6]Timestamp
 
@@ -36,10 +38,10 @@ public class readWrite {
     public void storeStart(List<String>[] list, String listName) throws IOException, CsvValidationException {  //useless method maybe for later
         switch (listName) {
             case "getStorageAkkList":
-                    writeCVSFile(list, listName);
+                writeCVSFile(list, listName);
                 break;
             case "getPowerFlowList":
-                    writeCVSFile(list, listName);
+                writeCVSFile(list, listName);
                 break;
             default:
         }
@@ -77,6 +79,7 @@ public class readWrite {
 
             if(!date.equals(list[list.length-1].get(0).substring(0,10))) { //falls Datensatz von neuem Tag
                 writer.close();
+                //changeCSVtoExcl(path);
                 writeCVSFile(list, listName);
                 return;
             }
@@ -93,9 +96,8 @@ public class readWrite {
 
         // closing writer connection
         writer.close();
+        //changeCSVtoExcl(path);
     }
-
-
 
     public List<String>[] readCVSFile( List<String>[] list, String path, String listname, File file) throws IOException, CsvValidationException {
 
@@ -129,20 +131,20 @@ public class readWrite {
     }
 
     public String getFilePath(String date, String listName){
-        String fp = "D:\\solarAPIOutput\\" + listName + date + ".csv";
+        String fp = Main.path + listName + date + ".csv";
         return fp;
     }
 
     public File isFileExist(String path) {
         File f = new File(path);
-       if (f.isFile())
-       {
-           return f;
-       }
+        if (f.isFile())
+        {
+            return f;
+        }
         else{
 
-           return null;
-       }
+            return null;
+        }
     }
 
     private String[] getHeaderFN(String listName) {
@@ -158,5 +160,27 @@ public class readWrite {
                 return null;
         }
     }
+
+    /*
+    public void changeCSVtoExcl(String pathCSV){
+
+        File f = isFileExist(pathCSV.replaceAll("csv", "xlsx"));
+        if (f != null) {
+            System.out.println("xlsx file already exists");
+           f.delete();
+        }
+
+        CsvLoadOptions loadOptions = new CsvLoadOptions();
+        loadOptions.setSeparator(',');
+        Converter converter = new Converter(pathCSV, loadOptions);
+
+        SpreadsheetConvertOptions options = new SpreadsheetConvertOptions();
+        options.setFormat(SpreadsheetFileType.Xlsx);
+
+        converter.convert(pathCSV.replaceAll("csv", "xlsx"), options);
+    }
+     */
+
+
 
 }
